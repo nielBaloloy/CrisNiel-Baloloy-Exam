@@ -1,0 +1,151 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+
+  }
+ 
+  /* header section */
+  header {
+    background: #dd0b0b;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .header-logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .header-search {
+    flex-grow: 1;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  .header-search input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  /* channel-card header */
+  .channel-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 16px;
+    padding: 2em;
+    display: flex;
+    max-width:100%;
+    text-align: left;
+    justify-content:space-around;
+    flex-wrap: wrap;
+   
+  }
+  .channel-card img{
+      width:100%;
+  }
+  .channel-description{
+  width:80%;
+  }
+  .channel-title{
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 700;
+  }
+  /* Video section */
+ /* Basic styles for video header */
+.video-header-title {
+    font-size: 24px;
+    margin: 5px 1em 5px;
+  }
+  
+  
+  .video-panel {
+    padding:6px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:space-around;
+    
+  }
+  
+  /* Individual video card styles */
+  .video-card {
+    border: .5px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    text-align: left;
+    overflow: hidden;
+    background-color: #fff;
+    transition: transform 0.3s;
+    margin-bottom:2em;
+  }
+  
+  .video-card img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .video-card h4 {
+    font-size: 18px;
+    margin: 16px 1rem 5px;
+  }
+  
+  .video-card .video-description {
+    font-size: 14px;
+    color: #555;
+    margin: 0 16px 16px;
+    
+  }
+  
+
+  
+  
+
+  .pagination-controls {
+    margin-top: 20px;
+    text-align: center;
+  }
+  .pagination-controls button {
+    padding: 8px 16px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 4px;
+    background-color: #1a73e8;
+    color: #fff;
+    cursor: pointer;
+  }
+  .pagination-controls button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  .pagination-controls span {
+    margin: 0 10px;
+  }
+  /* Responsive design adjustments */
+@media (max-width: 1200px) {
+    .video-card {
+      width: 250px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .video-card {
+      width: 100%;
+      max-width: 500px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .video-card {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
