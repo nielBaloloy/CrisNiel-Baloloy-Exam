@@ -15,7 +15,7 @@ $dotenv->load();
 // Get the API key from environment variables
 $apiKey = $_ENV['YOUTUBE_API_KEY'] ?? null; 
 if (!$apiKey) {
-    die("API key not set. Check your .env file.");
+    die("API key not set.");
 }
 
 $channelIds = ['UCWv7vMbMWH4-V0ZXdmDpPBA', 'UC_x5XG1OV2P6uZZ5FSM9Ttw'];
