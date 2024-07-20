@@ -30,24 +30,25 @@
       <!-- Playlist Section -->
       <h2 class="video-header-title">Videos</h2>
       <div v-if="videos.length" class="video-panel">
-        <div class="video-card" v-for="video in videos" :key="video.video_id">
-          <img :src="video.thumbnail_url" alt="Video Thumbnail">
-          <h4>{{ video.title }}</h4>
-          
+        <div class="video-panel">
+          <div class="video-card" v-for="video in videos" :key="video.video_id">
+            <img :src="video.thumbnail_url" alt="Video Thumbnail">
+            <h4>{{ video.title }}</h4>
+          </div>
         </div>
-        
-        <!-- Pagination Controls -->
         <div class="pagination-controls">
           <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
           <span>Page {{ currentPage }} of {{ totalPages }}</span>
           <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
         </div>
-      </div>
+      </div>  
+     
       <p v-else>No videos found.</p>
     </div>
     <p v-if="message">{{ message }}</p>
-  </div>
 
+  </div>
+ 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script>
     const { createApp } = Vue;
@@ -101,4 +102,5 @@
     }).mount('#app');
   </script>
 </body>
+
 </html>
