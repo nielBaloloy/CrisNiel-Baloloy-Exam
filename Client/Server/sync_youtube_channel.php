@@ -1,22 +1,36 @@
 <?php
 require 'vendor/autoload.php';
 require './connectionDB.php';
+require './apiClient/api_Client.php';
+require './apiClient/database_Helper.php';
 
-use Google\Client;
-use Google\Service\YouTube;
+use App\YouTubeClient;
+use App\DatabaseHelper;
+use Dotenv\Dotenv;
 
-// Configs
-$apiKey = 'AIzaSyC9mGTx0NwPsJj2cm-AwUE61YcGvLyKtrA';
-$channelIds = ['UCWv7vMbMWH4-V0ZXdmDpPBA', 'UC_x5XG1OV2P6uZZ5FSM9Ttw']; 
+// Load environment variables from .env file
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-// Initialize YouTube API client
-$client = new Client();
-$client->setDeveloperKey($apiKey);
-$service = new YouTube($client);
+// Get the API key from environment variables
+$apiKey = $_ENV['YOUTUBE_API_KEY'] ?? null; 
+if (!$apiKey) {
+    die("API key not set. Check your .env file.");
+}
+
+$channelIds = ['UCWv7vMbMWH4-V0ZXdmDpPBA', 'UC_x5XG1OV2P6uZZ5FSM9Ttw'];
+
+// Initialize clients
+$youtubeClient = new YouTubeClient($apiKey);
+$databaseHelper = new DatabaseHelper($conn);
 
 foreach ($channelIds as $channelId) {
     // Get channel details
-    $response = $service->channels->listChannels('snippet,contentDetails', ['id' => $channelId]);
+    $response = $youtubeClient->getChannelDetails($channelId);
+    if (empty($response->items)) {
+        die("Channel not found: $channelId");
+    }
+
     $channel = $response->items[0];
     $channelData = [
         'channel_id' => $channel->id,
@@ -25,15 +39,8 @@ foreach ($channelIds as $channelId) {
         'profile_picture' => $channel->snippet->thumbnails->default->url
     ];
 
-    // Save channel details 
-    $stmt = $conn->prepare("
-        INSERT INTO youtube_channels (channel_id, channel_name, channel_description, channel_image)
-        VALUES (?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE channel_name = VALUES(channel_name), channel_description = VALUES(channel_description), channel_image = VALUES(channel_image)
-    ");
-    $stmt->bind_param("ssss", $channelData['channel_id'], $channelData['name'], $channelData['description'], $channelData['profile_picture']);
-    $stmt->execute();
-    $stmt->close();
+    // Save channel details
+    $databaseHelper->saveChannel($channelData);
 
     // Get channel uploads playlist ID
     $uploadsPlaylistId = $channel->contentDetails->relatedPlaylists->uploads;
@@ -43,11 +50,7 @@ foreach ($channelIds as $channelId) {
     $pageToken = null;
 
     do {
-        $response = $service->playlistItems->listPlaylistItems('snippet', [
-            'playlistId' => $uploadsPlaylistId,
-            'maxResults' => 500,
-            'pageToken' => $pageToken
-        ]);
+        $response = $youtubeClient->getPlaylistItems($uploadsPlaylistId, $pageToken);
 
         foreach ($response->items as $item) {
             if (count($videos) < 100) {
@@ -68,18 +71,7 @@ foreach ($channelIds as $channelId) {
     } while ($pageToken && count($videos) < 100);
 
     // Save videos
-    $stmt = $conn->prepare("
-        INSERT INTO youtube_channel_videos (channel_id, video_id, title, description, thumbnail_url, video_link)
-        VALUES (?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE title = VALUES(title), description = VALUES(description), thumbnail_url = VALUES(thumbnail_url), video_link = VALUES(video_link)
-    ");
-
-    foreach ($videos as $video) {
-        $stmt->bind_param("ssssss", $video['channel_id'], $video['video_id'], $video['title'], $video['description'], $video['thumbnail'], $video['video_link']);
-        $stmt->execute();
-    }
-
-    $stmt->close();
+    $databaseHelper->saveVideos($videos);
 }
 
 $conn->close();

@@ -19,7 +19,7 @@ $jsonData = [];
     $itemsPerPage = 20;
     $offset = ($page - 1) * $itemsPerPage;
 
-# Fetch channel information
+//  Fetch channel information
 
     $stmt = $conn->prepare("SELECT * FROM youtube_channels WHERE channel_id = ?");
     $stmt->bind_param("s", $channelId);
@@ -27,8 +27,7 @@ $jsonData = [];
     $result = $stmt->get_result();
     $channel = $result->fetch_assoc();
     $stmt->close();
-
-# Fetch videos
+// Fetch videos
     $stmt = $conn->prepare("SELECT * FROM youtube_channel_videos WHERE channel_id = ? LIMIT ? OFFSET ?");
     $stmt->bind_param("sii", $channelId, $itemsPerPage, $offset);
     $stmt->execute();
@@ -36,7 +35,7 @@ $jsonData = [];
     $videos = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
 
-# Count total pages
+//  Count total pages
     $stmt = $conn->prepare("SELECT COUNT(*) as count FROM youtube_channel_videos WHERE channel_id = ?");
     $stmt->bind_param("s", $channelId);
     $stmt->execute();
@@ -47,7 +46,7 @@ $jsonData = [];
 
 $conn->close();
 
-# Create JSON feed
+// Create JSON feed
     $jsonData = [
         'channel' => $channel,
         'videos' => $videos,
